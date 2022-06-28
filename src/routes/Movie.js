@@ -10,6 +10,7 @@ const GET_MOVIE = gql`
       title
       medium_cover_image
       rating
+      isLiked @client
     }
   }
 `
@@ -55,18 +56,35 @@ const Image = styled.div`
 function Movie() {
 
   const { id } = useParams();
-  const { data, loading } = useQuery(GET_MOVIE, {
+  const { data, loading, client: { cache } } = useQuery(GET_MOVIE, {
     variables: {
       movieId: id
     }
   });
 
 
+  const onClick = () => {
+    //프래그먼트 형태의 데이터 생성
+    // 캐쉬에 들어있는 데이터를 추적하여 데이터 주입
+    cache.writeFragment({
+      id: `Movie:${id}`, // 여기의 Movie와 아래의 on Movie는 Type Movie를 칭하기 때문에 선언된대로 사용하여야 한다. 
+      fragment: gql`
+        fragment MovieFragment on Movie {  
+          isLiked
+        }
+      `,
+      data: {
+        isLiked: !data.movie.isLiked
+      }
+    })
+  }
+
   return (
     <Container>
       <Column>
         <Title>{loading ? "Loading..." : `${data.movie?.title}`}</Title>
         <Subtitle>⭐️ {data?.movie?.rating}</Subtitle>
+        <button onClick={onClick}>{data?.movie?.isLiked ? "Unlike" : "like"}</button>
       </Column>
       <Image bg={data?.movie?.medium_cover_image} />
     </Container>

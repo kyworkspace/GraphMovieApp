@@ -58,3 +58,42 @@
   ```
 
   - 위와 같이 쿼리를 호출할때 , 2번째 파라미터로 variable에 원하는 파라미터를 넣어준다.
+
+
+  #### local only field
+   - apollo 의 cache에서만 활동하는 데이터
+
+   ```
+     query getMovie($movieId : String!){
+      movie(id:$movieId){
+        id 
+        title
+        medium_cover_image
+        rating
+        isLiked @client <-- local only field에서만 사용한다는 뜻
+      }
+    }
+   ```
+
+
+  ```
+  cache.writeFragment({
+    id: `Movie:${id}`, // 여기의 Movie와 아래의 on Movie는 Type Movie를 칭하기 때문에 선언된대로 사용하여야 한다. 
+    fragment: gql`
+      fragment MovieFragment on Movie {  
+        isLiked
+      }
+    `,
+    data: {
+      isLiked: true
+    }
+  })
+  ```
+
+  1. 어떤 데이터셋을 바꿀것인지 캐시를 찾는다
+  2. apollo 에게 어떤 데이터를 바꿀 것인지 미리 정의한다. (fragment 부분)
+  3. 어떤 데이터를 어떻게 바꿀것인지 정의한다.
+
+
+## !BOOM!
+![image](https://user-images.githubusercontent.com/45280952/176186474-885a38e7-94a7-4127-b9b6-f7b79264333a.png)
