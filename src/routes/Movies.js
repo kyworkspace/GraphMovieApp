@@ -1,6 +1,5 @@
-import client from 'apollo'
 import React, { useEffect, useState } from 'react'
-import { gql } from '@apollo/client'
+import { gql, useApolloClient } from '@apollo/client'
 
 function Movies() {
 
@@ -8,7 +7,7 @@ function Movies() {
 
   //아폴로 클라이언트 접근
   //hook
-  //const client = useApolloClient();
+  const client = useApolloClient();
 
   //provider
   useEffect(() => {
