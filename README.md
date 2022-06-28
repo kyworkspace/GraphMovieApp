@@ -29,3 +29,32 @@
  ```
 
  - 위와 같이 사용자가 원하는 것을 먼저 선언하는 것이 특징이다.
+
+
+ #### 변수를 넘겨서 데이터 받기
+  - Movie에서 param으로 가져온 코드를 서버에 넘겨준다.
+
+  ```
+  const GET_MOVIE = gql`
+    query getMovie($movieId : String!){
+      movie(id:$movieId){
+        id
+        title
+      }
+    }
+  `
+  ```
+
+  - 쿼리를 위와 같이 작성하고
+
+
+  ```
+    const { data, loading } = useQuery(GET_MOVIE, {
+    variables: {
+      movieId: id
+    }
+  });
+
+  ```
+
+  - 위와 같이 쿼리를 호출할때 , 2번째 파라미터로 variable에 원하는 파라미터를 넣어준다.
