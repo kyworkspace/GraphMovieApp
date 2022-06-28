@@ -1,30 +1,38 @@
-import React, { useEffect, useState } from 'react'
-import { gql, useApolloClient } from '@apollo/client'
+import React from 'react'
+import { gql, useQuery } from '@apollo/client'
+
+//graphql query
+const ALL_MOVIES = gql`
+  query getMovies{
+    allMovies{
+      title
+      id
+    }
+  }
+  
+`
 
 function Movies() {
 
-  const [movies, setMovies] = useState([])
+  //선언형 코드
+  const { data, loading, error } = useQuery(ALL_MOVIES);
 
-  //아폴로 클라이언트 접근
-  //hook
-  const client = useApolloClient();
+  //일반적으로 사용하는 것은 명령형 코드
 
-  //provider
-  useEffect(() => {
-    client.query({
-      query: gql`
-        {
-          allMovies{
-            title
-          }
-        }
-      `
-    }).then(data => setMovies(data.data.allMovies))
-  }, [])
-
+  if (loading) {
+    return <h1>Loading...</h1>
+  }
+  if (error) {
+    return <h1>Could not fetch :( </h1>
+  }
 
   return (
-    <div>{movies.map(movie => <li key={movie.id}>{movie.title}</li>)}</div>
+    <ul>
+      <h1>Movies</h1>
+      {data.allMovies.map(movie => {
+        return <li key={movie.id}>{movie.title}</li>
+      })}
+    </ul>
   )
 }
 
